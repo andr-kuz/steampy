@@ -7,7 +7,8 @@ from steampy.confirmation import ConfirmationExecutor
 from steampy.exceptions import ApiException, TooManyRequests, LoginRequired
 from steampy.models import Currency, SteamUrl, GameOptions
 from steampy.utils import text_between, get_listing_id_to_assets_address_from_html, get_market_listings_from_html, \
-    merge_items_with_descriptions_from_listing, get_market_sell_listings_from_api, login_required
+    merge_items_with_descriptions_from_listing, get_market_sell_listings_from_api, login_required, \
+    extract_product_data
 from bs4 import BeautifulSoup
 import re
 
@@ -60,6 +61,13 @@ class SteamMarket:
         if response.status_code == 429:
             raise TooManyRequests("429 get_pagination()")
         data = response.json()
+        return data
+
+    def get_product_data(self, url: str) -> dict:
+        response = self._session.get(url)
+        if response.status_code == 429:
+            raise TooManyRequests("429 get_product_html()")
+        data = extract_product_data(response.content.decode('utf-8'))
         return data
 
     def fetch_price(self, item_hash_name: str, game: GameOptions, currency: Currency = Currency.USD, country='PL') -> dict:

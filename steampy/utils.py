@@ -14,6 +14,7 @@ from requests.structures import CaseInsensitiveDict
 
 from steampy.models import GameOptions
 from steampy.exceptions import ProxyConnectionError, LoginRequired
+import json
 
 
 def login_required(func):
@@ -264,3 +265,47 @@ def create_cookie(name: str, cookie: str, domain: str) -> dict:
     return {"name": name,
             "value": cookie,
             "domain": domain}
+
+def extract_product_data(html: str) -> dict:
+    context_id = 0
+    if ',"contextid":"' in html:
+        context_id = (
+            html
+            .split(',"contextid":"')[1]
+            .split('"')[0]
+        )
+    item_nameid = (
+        html
+        .split('Market_LoadOrderSpread( ')[1]
+        .split(' );')[0]
+    )
+    name = (
+        html
+        .split(',"market_hash_name":"')[1]
+        .split('","')[0]
+    )
+    market_ban = 0
+    if '"market_marketable_restriction":' in html:
+        market_ban = int(
+            html
+            .split('"market_marketable_restriction":')[1]
+            .split(',')[0]
+        )
+    sales = json.loads(
+        html
+        .split('var line1=')[1]
+        .split(']];\r\n')[0] + ']]'
+    )
+    app_id = (
+        html
+        .split('href="https://steamcommunity.com/market/search?appid=')[1]
+        .split('"')
+    )
+    return {
+        'market_hash_name': name,
+        'item_nameid': item_nameid,
+        'app_id': app_id,
+        'sales': sales,
+        'market_ban': market_ban,
+        'context_id': context_id
+    }
