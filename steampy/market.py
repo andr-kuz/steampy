@@ -4,11 +4,10 @@ import json
 from decimal import Decimal
 from requests import Session
 from steampy.confirmation import ConfirmationExecutor
-from steampy.exceptions import ApiException, TooManyRequests, LoginRequired
+from steampy.exceptions import ApiException, TooManyRequests
 from steampy.models import Currency, SteamUrl, GameOptions
 from steampy.utils import text_between, get_listing_id_to_assets_address_from_html, get_market_listings_from_html, \
-    merge_items_with_descriptions_from_listing, get_market_sell_listings_from_api, login_required, \
-    extract_product_data, extract_games_data
+    merge_items_with_descriptions_from_listing, get_market_sell_listings_from_api, login_required
 
 
 class SteamMarket:
@@ -22,38 +21,6 @@ class SteamMarket:
         self._steam_guard = steamguard
         self._session_id = session_id
         self.was_login_executed = True
-
-    def get_games(self) -> dict[str, str]:
-        url = SteamUrl.COMMUNITY_URL + '/market/'
-        response = self._session.get(url)
-        if response.status_code == 429:
-            raise TooManyRequests("429 get_games()")
-        games = extract_games_data(response.content.decode('utf-8'))
-        return games
-
-    def get_pagination(self, appid: str, start: int = 0, count: int = 100,
-                       sort_column: str = '', sort_dir: str = '') -> dict:
-        url = SteamUrl.COMMUNITY_URL + '/market/search/render/'
-        params = {
-          'appid': appid,
-          'start': start,
-          'count': count,
-          'norender': 1,
-          'sort_column': sort_column,
-          'sort_dir': sort_dir
-        }
-        response = self._session.get(url, params=params)
-        if response.status_code == 429:
-            raise TooManyRequests("429 get_pagination()")
-        data = response.json()
-        return data
-
-    def get_product_data(self, url: str) -> dict:
-        response = self._session.get(url)
-        if response.status_code == 429:
-            raise TooManyRequests("429 get_product_html()")
-        data = extract_product_data(response.content.decode('utf-8'))
-        return data
 
     def fetch_price(self, item_hash_name: str, game: GameOptions, currency: Currency = Currency.USD, country='PL') -> dict:
         url = SteamUrl.COMMUNITY_URL + '/market/priceoverview/'
