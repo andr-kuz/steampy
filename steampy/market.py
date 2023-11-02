@@ -8,9 +8,7 @@ from steampy.exceptions import ApiException, TooManyRequests, LoginRequired
 from steampy.models import Currency, SteamUrl, GameOptions
 from steampy.utils import text_between, get_listing_id_to_assets_address_from_html, get_market_listings_from_html, \
     merge_items_with_descriptions_from_listing, get_market_sell_listings_from_api, login_required, \
-    extract_product_data
-from bs4 import BeautifulSoup
-import re
+    extract_product_data, extract_games_data
 
 
 class SteamMarket:
@@ -30,20 +28,7 @@ class SteamMarket:
         response = self._session.get(url)
         if response.status_code == 429:
             raise TooManyRequests("429 get_games()")
-        soup = BeautifulSoup(response.content.decode('utf-8'), features='lxml')
-        game_elements = soup.select('.market_search_game_button_group a.game_button')
-        games = {}
-        for game in game_elements:
-            href: str = game['href']
-            appid = href.split('appid=')[1].split('&')[0]
-            if ele := game.select_one('span.game_button_game_name'):
-                name = (
-                    re.sub(
-                        r'[\n\t\r]*', '',
-                        ele.get_text()
-                    )
-                )
-                games[name] = appid
+        games = extract_games_data(response.content.decode('utf-8'))
         return games
 
     def get_pagination(self, appid: str, start: int = 0, count: int = 100,

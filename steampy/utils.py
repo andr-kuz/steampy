@@ -1,5 +1,4 @@
 import os
-import re
 import requests
 import re
 import copy
@@ -309,3 +308,20 @@ def extract_product_data(html: str) -> dict:
         'market_ban': market_ban,
         'context_id': context_id
     }
+
+def extract_games_data(html: str) -> dict[str, str]:
+    games = {}
+    soup = BeautifulSoup(html, features='lxml')
+    game_elements = soup.select('.market_search_game_button_group a.game_button')
+    for game in game_elements:
+        href: str = game['href']
+        appid = href.split('appid=')[1].split('&')[0]
+        if ele := game.select_one('span.game_button_game_name'):
+            name = (
+                re.sub(
+                    r'[\n\t\r]*', '',
+                    ele.get_text()
+                )
+            )
+            games[name] = appid
+    return games
