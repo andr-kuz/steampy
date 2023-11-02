@@ -45,6 +45,23 @@ class SteamMarket:
                 games[name] = appid
         return games
 
+    def get_pagination(self, appid: str, start: int = 0, count: int = 100,
+                       sort_column: str = '', sort_dir: str = '') -> dict:
+        url = SteamUrl.COMMUNITY_URL + '/market/search/render/'
+        params = {
+          'appid': appid,
+          'start': start,
+          'count': count,
+          'norender': 1,
+          'sort_column': sort_column,
+          'sort_dir': sort_dir
+        }
+        response = self._session.get(url, params=params)
+        if response.status_code == 429:
+            raise TooManyRequests("429 get_pagination()")
+        data = response.json()
+        return data
+
     def fetch_price(self, item_hash_name: str, game: GameOptions, currency: Currency = Currency.USD, country='PL') -> dict:
         url = SteamUrl.COMMUNITY_URL + '/market/priceoverview/'
         params = {'country': country,
