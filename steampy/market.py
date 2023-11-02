@@ -8,6 +8,8 @@ from steampy.exceptions import ApiException, TooManyRequests, LoginRequired
 from steampy.models import Currency, SteamUrl, GameOptions
 from steampy.utils import text_between, get_listing_id_to_assets_address_from_html, get_market_listings_from_html, \
     merge_items_with_descriptions_from_listing, get_market_sell_listings_from_api, login_required
+from bs4 import BeautifulSoup
+import re
 
 
 class SteamMarket:
@@ -21,6 +23,27 @@ class SteamMarket:
         self._steam_guard = steamguard
         self._session_id = session_id
         self.was_login_executed = True
+
+    def get_games(self) -> dict[str, str]:
+        url = SteamUrl.COMMUNITY_URL + '/market/'
+        response = self._session.get(url)
+        if response.status_code == 429:
+            raise TooManyRequests("429 get_games()")
+        soup = BeautifulSoup(response.content.decode('utf-8'), features='lxml')
+        game_elements = soup.select('.market_search_game_button_group a.game_button')
+        games = {}
+        for game in game_elements:
+            href: str = game['href']
+            appid = href.split('appid=')[1].split('&')[0]
+            if ele := game.select_one('span.game_button_game_name'):
+                name = (
+                    re.sub(
+                        r'[\n\t\r]*', '',
+                        ele.get_text()
+                    )
+                )
+                games[name] = appid
+        return games
 
     def fetch_price(self, item_hash_name: str, game: GameOptions, currency: Currency = Currency.USD, country='PL') -> dict:
         url = SteamUrl.COMMUNITY_URL + '/market/priceoverview/'
