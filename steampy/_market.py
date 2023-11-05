@@ -2,8 +2,7 @@ from steampy.exceptions import TooManyRequests
 from steampy._exceptions import NotModified
 from steampy.models import SteamUrl
 from steampy.market import SteamMarket
-from steampy._utils import extract_games_data, extract_product_data, cookie_to_string
-from datetime import datetime
+from steampy._utils import extract_games_data, extract_product_data
 
 
 class SteamMarketCustom(SteamMarket):
@@ -42,35 +41,10 @@ class SteamMarketCustom(SteamMarket):
         data = extract_product_data(response.content.decode('utf-8'))
         return data
 
-    def fetch_histogram(self, item_nameid: str, referer: str, currency: int) -> dict:
+    def fetch_histogram(self, item_nameid: str, currency: int) -> dict:
         url = SteamUrl.COMMUNITY_URL + '/market/itemordershistogram'
-        cookie_dict = self._session.cookies.get_dict()
-        country = cookie_dict.get('steamCountry', 'US').split('%')[0]
-        time_now = datetime.utcnow()
-        seconds_now = time_now.second
-        seconds_rounded = seconds_now // 5 * 5
-        if not seconds_rounded % 10:
-            seconds_rounded += 5
-        time_now_rounded = time_now.replace(second=seconds_rounded)
-        time_now_rounded_str = time_now_rounded.strftime('%a, %d %b %Y %H:%M:%S GMT')
-        cookie = cookie_to_string(cookie_dict)
-        self._session.headers.update({
-          'Accept': '*/*',
-          'Accept-Encoding': 'gzip, deflate, br',
-          'Accept-Languange': 'en-US,en;q=0.5',
-          'Connection': 'keep-alive',
-          'Cookie': cookie,
-          'Host': 'steamcommunity.com',
-          'If-Modified-Since': time_now_rounded_str,
-          'Referer': referer,
-          'Sec-Fetch-Dest': 'empty',
-          'Sec-Fetch-Mode': 'cors',
-          'Sec-Fetch-Site': 'same-origin',
-          'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0',
-          'X-Requested-With': 'XMLHttpRequest',
-        })
         params = {
-          'country': country,
+          'country': 'US',
           'language': 'english',
           'currency': currency,
           'item_nameid': item_nameid,
@@ -81,5 +55,4 @@ class SteamMarketCustom(SteamMarket):
             raise TooManyRequests("429 fetch_histogram()")
         if response.status_code == 304:
             raise NotModified("304 fetch_histogram(). Try again in 5 seconds")
-        if response.status_code == 200:
-            return response.json()
+        return response.json()
