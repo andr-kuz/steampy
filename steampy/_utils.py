@@ -1,3 +1,7 @@
+from bs4 import BeautifulSoup
+import json
+import re
+
 def extract_product_data(html: str) -> dict:
     context_id = 0
     if ',"contextid":"' in html:

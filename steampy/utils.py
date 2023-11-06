@@ -13,7 +13,6 @@ from requests.structures import CaseInsensitiveDict
 
 from steampy.models import GameOptions
 from steampy.exceptions import ProxyConnectionError, LoginRequired
-import json
 
 
 def login_required(func):
