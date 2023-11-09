@@ -9,7 +9,7 @@ class SteamMarketCustom(SteamMarket):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def get_games(self) -> dict[str, str]:
+    def get_games(self) -> dict[str, int]:
         url = SteamUrl.COMMUNITY_URL + '/market/'
         response = self._session.get(url)
         if response.status_code == 429:
