@@ -37,13 +37,19 @@ def extract_product_data(html: str) -> dict:
         .split('href="https://steamcommunity.com/market/search?appid=')[1]
         .split('"')
     )
+    currency = (
+        html
+        .split('{"currency":')[1]
+        .split(',')[0]
+    )
     return {
         'market_hash_name': name,
         'item_nameid': item_nameid,
         'app_id': app_id,
         'sales': sales,
         'market_ban': market_ban,
-        'context_id': context_id
+        'context_id': context_id,
+        'currency': currency,
     }
 
 def extract_games_data(html: str) -> dict[str, str]:
