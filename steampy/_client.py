@@ -6,7 +6,7 @@ from steampy._market import SteamMarketCustom
 
 class SteamClientCustom(SteamClient):
     def __init__(self, api_key: str, username: str = None, password: str = None, steam_guard: str = None,
-                 login_cookies: dict = None, proxies: dict = None) -> None:
+                 login_cookies: dict = None, proxies: dict = None):
         self._api_key = api_key
         self._session = requests.Session()
         if proxies:
