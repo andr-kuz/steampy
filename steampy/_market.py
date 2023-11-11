@@ -17,7 +17,7 @@ class SteamMarketCustom(SteamMarket):
         games = extract_games_data(response.content.decode('utf-8'))
         return games
 
-    def get_pagination(self, appid: str, start: int = 0, count: int = 100,
+    def get_page(self, appid: str, start: int = 0, count: int = 100,
                        sort_column: str = '', sort_dir: str = '') -> dict:
         url = SteamUrl.COMMUNITY_URL + '/market/search/render/'
         params = {
