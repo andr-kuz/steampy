@@ -29,6 +29,9 @@ class ProductDataTypeHint(TypedDict):
     currency: str
     histogram: NotRequired[ProductHistogramTypeHint]
 
+class ProductFullTypeHint(ProductDataTypeHint):
+    histogram: ProductHistogramTypeHint
+
 def extract_product_data(html: str) -> ProductDataTypeHint:
     context_id = '0'
     if ',"contextid":"' in html:
