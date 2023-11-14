@@ -23,7 +23,7 @@ class ProductDataTypeHint(TypedDict):
     market_hash_name: str
     item_nameid: str
     app_id: str
-    sales: list
+    sales: list[tuple[str, float, str]]
     market_ban: int
     context_id: str
     currency: str
