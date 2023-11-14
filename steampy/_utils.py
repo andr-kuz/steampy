@@ -84,7 +84,7 @@ def extract_product_data(html: str) -> ProductDataTypeHint:
 
 def extract_games_data(html: str) -> dict[str, int]:
     games = {}
-    soup = BeautifulSoup(html, features='lxml')
+    soup = BeautifulSoup(html, features='html.parser')
     game_elements = soup.select('.market_search_game_button_group a.game_button')
     for game in game_elements:
         href: str = game['href']
