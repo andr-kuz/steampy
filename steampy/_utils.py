@@ -1,9 +1,19 @@
 from bs4 import BeautifulSoup
 import json
 import re
+from typing import TypedDict
 
-def extract_product_data(html: str) -> dict:
-    context_id = 0
+class ProductDataHint(TypedDict):
+    market_hash_name: str
+    item_nameid: str
+    app_id: str
+    sales: list
+    market_ban: int
+    context_id: str
+    currency: str
+
+def extract_product_data(html: str) -> ProductData:
+    context_id = '0'
     if ',"contextid":"' in html:
         context_id = (
             html
@@ -27,7 +37,7 @@ def extract_product_data(html: str) -> dict:
             .split('"market_marketable_restriction":')[1]
             .split(',')[0]
         )
-    sales = json.loads(
+    sales: list = json.loads(
         html
         .split('var line1=')[1]
         .split(']];\r\n')[0] + ']]'
@@ -35,7 +45,7 @@ def extract_product_data(html: str) -> dict:
     app_id = (
         html
         .split('href="https://steamcommunity.com/market/search?appid=')[1]
-        .split('"')
+        .split('"')[0]
     )
     currency = (
         html

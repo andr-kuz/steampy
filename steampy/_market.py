@@ -2,7 +2,7 @@ from steampy.exceptions import TooManyRequests
 from steampy._exceptions import NotModified
 from steampy.models import SteamUrl
 from steampy.market import SteamMarket
-from steampy._utils import extract_games_data, extract_product_data
+from steampy._utils import extract_games_data, extract_product_data, ProductDataHint
 
 
 class SteamMarketCustom(SteamMarket):
@@ -34,7 +34,7 @@ class SteamMarketCustom(SteamMarket):
         data = response.json()
         return data
 
-    def get_product_data(self, url: str) -> dict:
+    def get_product_data(self, url: str) -> ProductDataHint:
         response = self._session.get(url)
         if response.status_code == 429:
             raise TooManyRequests("429 get_product_html()")
