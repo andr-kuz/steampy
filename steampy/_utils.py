@@ -3,7 +3,7 @@ import json
 import re
 from typing import TypedDict
 
-class ProductDataHint(TypedDict):
+class ProductDataTypeHint(TypedDict):
     market_hash_name: str
     item_nameid: str
     app_id: str
@@ -12,7 +12,7 @@ class ProductDataHint(TypedDict):
     context_id: str
     currency: str
 
-class ProductHistogramHint(TypedDict):
+class ProductHistogramTypeHint(TypedDict):
     success: int
     sell_order_table: str
     sell_order_summary: str
@@ -28,7 +28,7 @@ class ProductHistogramHint(TypedDict):
     price_prefix: str
     price_suffix: str
 
-def extract_product_data(html: str) -> ProductDataHint:
+def extract_product_data(html: str) -> ProductDataTypeHint:
     context_id = '0'
     if ',"contextid":"' in html:
         context_id = (
