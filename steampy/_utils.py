@@ -12,7 +12,23 @@ class ProductDataHint(TypedDict):
     context_id: str
     currency: str
 
-def extract_product_data(html: str) -> ProductData:
+class ProductHistogramHint(TypedDict):
+    success: int
+    sell_order_table: str
+    sell_order_summary: str
+    buy_order_table: str
+    buy_order_summary: str
+    highest_buy_order: str
+    lowest_sell_order: str
+    buy_order_graph: list[tuple[float, int, str]]
+    sell_order_graph: list[tuple[float, int, str]]
+    graph_max_y: int
+    graph_min_x: float
+    graph_max_x: float
+    price_prefix: str
+    price_suffix: str
+
+def extract_product_data(html: str) -> ProductDataHint:
     context_id = '0'
     if ',"contextid":"' in html:
         context_id = (

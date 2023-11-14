@@ -2,7 +2,7 @@ from steampy.exceptions import TooManyRequests
 from steampy._exceptions import NotModified
 from steampy.models import SteamUrl
 from steampy.market import SteamMarket
-from steampy._utils import extract_games_data, extract_product_data, ProductDataHint
+from steampy._utils import extract_games_data, extract_product_data, ProductDataTypeHint, ProductHistogramTypeHint
 
 
 class SteamMarketCustom(SteamMarket):
@@ -34,14 +34,14 @@ class SteamMarketCustom(SteamMarket):
         data = response.json()
         return data
 
-    def get_product_data(self, url: str) -> ProductDataHint:
+    def get_product_data(self, url: str) -> ProductDataTypeHint:
         response = self._session.get(url)
         if response.status_code == 429:
             raise TooManyRequests("429 get_product_html()")
         data = extract_product_data(response.content.decode('utf-8'))
         return data
 
-    def fetch_histogram(self, item_nameid: str, currency: int) -> dict:
+    def fetch_histogram(self, item_nameid: str, currency: str) -> ProductHistogramTypeHint:
         url = SteamUrl.COMMUNITY_URL + '/market/itemordershistogram'
         params = {
           'country': 'US',
