@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import json
 import re
-from typing import NotRequired, TypedDict
+from typing import TypedDict
 
 class ProductHistogramTypeHint(TypedDict):
     success: int
@@ -27,7 +27,9 @@ class ProductDataTypeHint(TypedDict):
     market_ban: int
     context_id: str
     currency: str
-    histogram: NotRequired[ProductHistogramTypeHint]
+
+class ProductFullTypeHint(ProductHistogramTypeHint):
+    histogram: ProductHistogramTypeHint
 
 def extract_product_data(html: str) -> ProductDataTypeHint:
     context_id = '0'
