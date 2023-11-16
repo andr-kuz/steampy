@@ -40,9 +40,9 @@ class SteamMarketCustom(SteamMarket):
             raise TooManyRequests("429 get_product_html()")
         html = response.content.decode('utf-8')
         if 'There are no listings for this item.' in html:
-            raise NoListings
+            raise NoListings('There are no listings for this item.')
         elif 'There was an error getting listings for this item. Please try again later.' in html:
-            raise ErrorGettingListings
+            raise ErrorGettingListings('There was an error getting listings for this item. Please try again later.')
         data = extract_product_data(html)
         return data
 
