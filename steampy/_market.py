@@ -1,5 +1,5 @@
 from steampy.exceptions import TooManyRequests
-from steampy._exceptions import NotModified
+from steampy._exceptions import NotModified, NoListings, ErrorGettingListings
 from steampy.models import SteamUrl
 from steampy.market import SteamMarket
 from steampy._utils import extract_games_data, extract_product_data, ProductDataTypeHint, ProductHistogramTypeHint
@@ -38,7 +38,12 @@ class SteamMarketCustom(SteamMarket):
         response = self._session.get(url)
         if response.status_code == 429:
             raise TooManyRequests("429 get_product_html()")
-        data = extract_product_data(response.content.decode('utf-8'))
+        html = response.content.decode('utf-8')
+        if 'There are no listings for this item.' in html:
+            raise NoListings
+        elif 'There was an error getting listings for this item. Please try again later.' in html:
+            raise ErrorGettingListings
+        data = extract_product_data(html)
         return data
 
     def fetch_histogram(self, item_nameid: str, currency: str) -> ProductHistogramTypeHint:
