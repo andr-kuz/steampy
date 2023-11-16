@@ -67,11 +67,13 @@ def extract_product_data(html: str) -> ProductDataTypeHint:
         .split('href="https://steamcommunity.com/market/search?appid=')[1]
         .split('"')[0]
     )
-    currency = (
-        html
-        .split('{"currency":')[1]
-        .split(',')[0]
-    )
+    currency = '1'
+    if '{"wallet_currency":' in html:
+        currency = (
+            html
+            .split('{"wallet_currency":')[1]
+            .split(',')[0]
+        )
     return {
         'market_hash_name': name,
         'item_nameid': item_nameid,
