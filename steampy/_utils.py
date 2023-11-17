@@ -22,7 +22,7 @@ class ProductHistogramTypeHint(TypedDict):
 class ProductDataTypeHint(TypedDict):
     market_hash_name: str
     item_nameid: str
-    app_id: str
+    appid: str
     sales: list[tuple[str, float, str]]
     market_ban: int
     context_id: str
@@ -62,7 +62,7 @@ def extract_product_data(html: str) -> ProductDataTypeHint:
         .split('var line1=')[1]
         .split(']];\r\n')[0] + ']]'
     )
-    app_id = (
+    appid = (
         html
         .split('href="https://steamcommunity.com/market/search?appid=')[1]
         .split('"')[0]
@@ -77,7 +77,7 @@ def extract_product_data(html: str) -> ProductDataTypeHint:
     return {
         'market_hash_name': name,
         'item_nameid': item_nameid,
-        'app_id': app_id,
+        'appid': appid,
         'sales': sales,
         'market_ban': market_ban,
         'context_id': context_id,
