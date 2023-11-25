@@ -84,13 +84,13 @@ def extract_product_data(html: str) -> ProductDataTypeHint:
         'currency': currency,
     }
 
-def extract_games_data(html: str) -> dict[str, int]:
+def extract_games_data(html: str) -> dict[str, str]:
     games = {}
     soup = BeautifulSoup(html, features='html.parser')
     game_elements = soup.select('.market_search_game_button_group a.game_button')
     for game in game_elements:
         href: str = game['href']
-        appid = int(href.split('appid=')[1].split('&')[0])
+        appid = href.split('appid=')[1].split('&')[0]
         if ele := game.select_one('span.game_button_game_name'):
             name = (
                 re.sub(

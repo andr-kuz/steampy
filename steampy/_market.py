@@ -9,13 +9,12 @@ class SteamMarketCustom(SteamMarket):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def get_games(self) -> dict[str, int]:
+    def get_games(self) -> dict[str, str]:
         url = SteamUrl.COMMUNITY_URL + '/market/'
         response = self._session.get(url)
         if response.status_code == 429:
             raise TooManyRequests("429 get_games()")
-        games = extract_games_data(response.content.decode('utf-8'))
-        return games
+        return extract_games_data(response.content.decode('utf-8'))
 
     def get_page(self, appid: str, start: int = 0, count: int = 100,
                        sort_column: str = '', sort_dir: str = '') -> dict:
