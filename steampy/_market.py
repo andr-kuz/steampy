@@ -60,6 +60,6 @@ class SteamMarketCustom(SteamMarket):
         if response.status_code == 304:
             raise NotModified("304 fetch_histogram(). Try again in 5 seconds")
         histogram = response.json()
-        if not isinstance(histogram, dict) or not histogram.get('success') == '1':
+        if not isinstance(histogram, dict) or not histogram.get('success') == 1:
             raise ErrorGettingHistogram('Error getting histogram')
         return response.json()
