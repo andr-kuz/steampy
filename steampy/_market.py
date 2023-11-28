@@ -38,7 +38,7 @@ class SteamMarketCustom(SteamMarket):
         if response.status_code == 429:
             raise TooManyRequests("429 get_product_html()")
         html = response.content.decode('utf-8')
-        if 'There are no listings for this item.' in html:
+        if 'There are no listings for this item.' in html or not 'var line1=' in html:
             raise NoListings('There are no listings for this item.')
         elif 'There was an error getting listings for this item. Please try again later.' in html:
             raise ErrorGettingListings('There was an error getting listings for this item. Please try again later.')
