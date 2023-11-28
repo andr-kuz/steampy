@@ -1,5 +1,5 @@
 from steampy.exceptions import TooManyRequests
-from steampy._exceptions import NotModified, NoListings, ErrorGettingListings
+from steampy._exceptions import NotModified, NoListings, ErrorGettingListings, ErrorGettingHistogram
 from steampy.models import SteamUrl
 from steampy.market import SteamMarket
 from steampy._utils import extract_games_data, extract_product_data, ProductDataTypeHint, ProductHistogramTypeHint
@@ -59,4 +59,7 @@ class SteamMarketCustom(SteamMarket):
             raise TooManyRequests("429 fetch_histogram()")
         if response.status_code == 304:
             raise NotModified("304 fetch_histogram(). Try again in 5 seconds")
+        histogram = response.json()
+        if not isinstance(histogram, dict) or not histogram.get('success') == '1':
+            raise ErrorGettingHistogram('Error getting histogram')
         return response.json()

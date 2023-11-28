@@ -6,3 +6,6 @@ class NoListings(Exception):
 
 class ErrorGettingListings(Exception):
     pass
+
+class ErrorGettingHistogram(Exception):
+    pass
