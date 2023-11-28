@@ -20,6 +20,7 @@ class ProductHistogramTypeHint(TypedDict):
     price_suffix: str
 
 class ProductDataTypeHint(TypedDict):
+    game_name: str
     market_hash_name: str
     item_nameid: str
     appid: str
@@ -44,6 +45,11 @@ def extract_product_data(html: str) -> ProductDataTypeHint:
         html
         .split('Market_LoadOrderSpread( ')[1]
         .split(' );')[0]
+    )
+    game_name = (
+            html
+            .split('<span class="market_listing_game_name">')[1]
+            .split('</span>')[0]
     )
     name = (
         html
@@ -75,6 +81,7 @@ def extract_product_data(html: str) -> ProductDataTypeHint:
             .split(',')[0]
         )
     return {
+        'game_name': game_name,
         'market_hash_name': name,
         'item_nameid': item_nameid,
         'appid': appid,
