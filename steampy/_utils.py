@@ -2,6 +2,10 @@ from bs4 import BeautifulSoup
 import json
 import re
 from typing_extensions import NotRequired, TypedDict
+import requests
+from steampy.exceptions import ProxyConnectionError
+
+REQUESRS_TIMEOUT = 10
 
 class ProductHistogramTypeHint(TypedDict):
     success: int
@@ -107,3 +111,10 @@ def extract_games_data(html: str) -> dict[str, str]:
             )
             games[name] = appid
     return games
+
+def ping_proxy(proxies: dict):
+    try:
+        requests.get('https://steamcommunity.com/', proxies = proxies, timeout=REQUESRS_TIMEOUT)
+        return True
+    except Exception as e:
+        raise ProxyConnectionError("Proxy not working for steamcommunity.com for " + proxies['https'])
