@@ -107,7 +107,3 @@ def extract_games_data(html: str) -> dict[str, str]:
             )
             games[name] = appid
     return games
-
-def cookie_to_string(cookie_dict: dict):
-    cookie_string = "; ".join([str(x) + "=" + str(y) for x, y in cookie_dict.items()])
-    return cookie_string
